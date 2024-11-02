@@ -1,7 +1,7 @@
 import pyprimesieve
 
 
-def proper_divisors(n):
+def proper_divisors(n) -> set:
     div = divisors(n)
     div.remove(n)
     return div

@@ -10,8 +10,6 @@ def get_next_pentagonal():
 get_next_pentagonal()
 get_next_pentagonal()
 
-d = float('inf')
-i = 0
 while pentagonals[-1] - pentagonals[-2] < d:
     for subst in pentagonals[:-1]:
         difference = pentagonals[-1] - subst
@@ -19,10 +17,4 @@ while pentagonals[-1] - pentagonals[-2] < d:
             break
         if difference in pentagonals_set and difference-subst in pentagonals_set:
             print(f"Found: {difference} - {subst} with difference {difference - subst}")
-            d = min(d, difference - subst)
-    i += 1
-    if i % 10000 == 0:
-        print(f"{pentagonals[-1] - pentagonals[-2]} < {d}")
-    get_next_pentagonal()
-    
-print(d)
+            exit()
