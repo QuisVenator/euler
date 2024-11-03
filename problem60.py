@@ -1,53 +1,58 @@
 import pyprimesieve as ps
-from itertools import permutations
-from threading import Thread, Lock
+from threading import Thread, Event
+import queue
 
 primes = ps.primes(10**9)
+primes_set = set(primes)
 
-prime_set = set(primes)
+permutations = queue.Queue(maxsize=10)
+solution_found = Event()
 
-i = 0
-index_lock = Lock()
-
-def check_prime(prime):
-    prime = str(prime)
-
-    for s1 in range(1, len(prime)):
-        for s2 in range(s1+1, len(prime)):
-            for s3 in range(s2+1, len(prime)):
-                for s4 in range(s3+1, len(prime)):
-                    p1 = int(prime[:s1])
-                    p2 = int(prime[s1:s2])
-                    p3 = int(prime[s2:s3])
-                    p4 = int(prime[s3:s4])
-                    p5 = int(prime[s4:])
-                    if len(set([p1, p2, p3, p4, p5])) != 5:
-                        continue
-                    if all([p1 in prime_set, p2 in prime_set, p3 in prime_set, p4 in prime_set, p5 in prime_set]):
-                        # try all permutations
-                        for perm in permutations([p1, p2, p3, p4, p5]):
-                            if all([int("".join(map(str, perm))) in prime_set for perm in permutations([p1, p2, p3, p4, p5])]):
-                                print(sum(perm))
-                                exit()
+def check_permutation(permutation):
+    for i in range(5):
+        for j in range(i+1, 5):
+            if not (int(str(permutation[i]) + str(permutation[j])) in primes_set and int(str(permutation[j]) + str(permutation[i])) in primes_set):
+                return False
+    return True
     
 
 def check_primes():
-    global i
-    while True:
-        with index_lock:
-            if i >= len(primes):
-                return
-            prime = primes[i]
-            i += 1
-        if i % 1000 == 0:
-            print(f"{prime} - {i / len(primes) * 100:.2f}%")
-        check_prime(prime)
+    while not solution_found.is_set():
+        try:
+            permutation = permutations.get(timeout=1)
+            if check_permutation(permutation):
+                print(f"Solution: {permutation}, sum = {sum(permutation)}")
+                solution_found.set()
+        except queue.Empty:
+            pass
+
+def create_permutations():
+    permutation_count = 0
+    index_million = 0
+    while primes[index_million] < 10**3:
+        index_million += 1
+    for i1 in range(index_million):
+        for i2 in range(i1+1, index_million):
+            for i3 in range(i2+1, index_million):
+                for i4 in range(i3+1, index_million):
+                    for i5 in range(i4+1, index_million):
+                        # if solution_found.is_set():
+                        #     break
+                        # permutations.put([primes[i1], primes[i2], primes[i3], primes[i4], primes[i5]])
+                        check_permutation([primes[i1], primes[i2], primes[i3], primes[i4], primes[i5]])
+                        permutation_count += 1
+                        if permutation_count % 1000 == 0:
+                            print(f"{permutation_count} permutations created")
+                            print(f"Progress: {i1 / index_million * 100:.2f}%")
 
 
-threads = [Thread(target=check_primes) for _ in range(12)]
-for t in threads:
-    t.start()
+# print(primes[-1])
+# threads = [Thread(target=check_primes) for _ in range(12)]
+# for t in threads:
+#     t.start()
 
-for t in threads:
-    t.join()
-    
+create_permutations()
+
+# for t in threads:
+#     t.join()
+
