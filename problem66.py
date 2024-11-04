@@ -1,5 +1,4 @@
-from decimal import Decimal
-import math
+from common import get_irrational_square_root, evaluate_postfix, tokens_to_fraction, infix_to_postfix
 import time
 
 start = time.process_time()
@@ -9,35 +8,29 @@ for i in range(2, 1001):
     if (i ** 0.5) % 1 == 0:
         continue
     multipliers.append(i)
-# multipliers = [13]
+# multipliers = [2,7,13,23]
 
+max_x = 0
+d_for_max_x = 0
+for m in multipliers:
+    sqr = get_irrational_square_root(m)
+    expr = ""
+    if len(sqr.repeating_part) % 2 == 1:
+        expr = sqr.generate_expansion(len(sqr.repeating_part) * 2)
+    else:
+        expr = sqr.generate_expansion(len(sqr.repeating_part))
+    
+    # print(expr)
 
-max_y = 0
-max_d = 0
-x = 1
-while True:
-    square = x ** 2
-    to_remove = []
-    for m in multipliers:
-        future = square * m + 1
-        future_sqr = Decimal(future).sqrt()
-        if future_sqr % 1 == 0:
-            to_remove.append(m)
-            if future_sqr > max_y:
-                max_y = future_sqr
-                max_d = m
-                print(f"Found {max_y}^2 - {max_d} * {x}^2 = 1")
-                print(f"Found solution for {m} with x = {x}")
-                print(f"Remaining multipliers: {len(multipliers) - len(to_remove)}")
-    for m in to_remove:
-        multipliers.remove(m)
-    if len(multipliers) == 0:
-        break
-    x += 1
+    fraction = evaluate_postfix(tokens_to_fraction(infix_to_postfix(expr)))
+    # print(m, fraction)
+    if fraction.numerator > max_x:
+        max_x = fraction.numerator
+        d_for_max_x = m
+        
 
 stop = time.process_time()
 
-print(max_y)
-print(max_d)
+print(f"Result: {d_for_max_x} ({max_x})")
 
 print(f"Time: {stop - start}")

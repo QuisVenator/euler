@@ -158,7 +158,7 @@ def tokens_to_fraction(tokens):
 def evaluate_postfix(expression):
     stack = []
     for token in expression:
-        if type(token) == Fraction:
+        if type(token) == Fraction or type(token) == int or type(token) == float:
             stack.append(token)
         else:
             num1 = stack.pop()
@@ -181,6 +181,16 @@ def evaluate_postfix(expression):
 class irrational_square_root:
     whole_part: int
     repeating_part: list
+
+    def generate_expansion(self, n):
+        stack = []
+        expression = f"{self.whole_part}"
+        
+        for i in range(n-1):
+            expression += f"+ 1 / ( {self.repeating_part[i % len(self.repeating_part)]}"
+            stack.append(")")
+        expression += "".join(stack)
+        return expression
 
 def get_irrational_square_root(n: int) -> irrational_square_root:
     whole_part = int(n ** 0.5)
