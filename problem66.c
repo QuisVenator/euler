@@ -79,7 +79,7 @@ int main() {
     printf("Initialized multipliers\n");
 
     // Create the threads
-    int thread_count = 14;
+    int thread_count = 16;
     pthread_t threads[thread_count];
     for (int i = 0; i < thread_count; i++) {
         pthread_create(&threads[i], NULL, &calc, NULL);
