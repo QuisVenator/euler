@@ -217,3 +217,26 @@ def get_irrational_square_root(n: int) -> irrational_square_root:
             break
 
     return irrational_square_root(whole_part, repeating_part)
+
+def gcd(a, b):
+    a_factors = pyprimesieve.factorize(a)
+    b_factors = pyprimesieve.factorize(b)
+    common_factors = set(a_factors.keys()).intersection(b_factors.keys())
+    gcd = 1
+    for factor in common_factors:
+        gcd *= factor ** min(a_factors[factor], b_factors[factor])
+
+def are_coprime(a, b):
+    a_factors = pyprimesieve.factorize(a)
+    b_factors = pyprimesieve.factorize(b)
+    common_factors = set([x[0] for x in a_factors]).intersection([x[0] for x in b_factors])
+    return len(common_factors) == 0
+
+
+def phi(n):
+    count = n
+    factors = pyprimesieve.factorize(n)
+    for factor, _ in factors:
+        count *= (1 - 1/factor)
+    
+    return count
