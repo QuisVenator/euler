@@ -221,10 +221,11 @@ def get_irrational_square_root(n: int) -> irrational_square_root:
 def gcd(a, b):
     a_factors = pyprimesieve.factorize(a)
     b_factors = pyprimesieve.factorize(b)
-    common_factors = set(a_factors.keys()).intersection(b_factors.keys())
+    common_factors = set([x[0] for x in a_factors]).intersection([x[0] for x in b_factors])
     gcd = 1
     for factor in common_factors:
         gcd *= factor ** min(a_factors[factor], b_factors[factor])
+    return gcd
 
 def are_coprime(a, b):
     a_factors = pyprimesieve.factorize(a)
