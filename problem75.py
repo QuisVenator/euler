@@ -1,36 +1,40 @@
 from math import sqrt
 
-dp = {}
-perfect_squares = {}
-for i in range(1, 1_500_000//2):
-    perfect_squares[i**2] = i
+def resolve(n):
+    dp = {}
+    perfect_squares = {}
+    for i in range(1, n//2):
+        perfect_squares[i**2] = i
 
-squares = []
+    squares = []
 
-for i in range(1, 1_500_000//2):
-    squares.append(i**2)
+    for i in range(1, n//2):
+        squares.append(i**2)
 
-    for j, square in enumerate(squares):
-        if i + j+1 > 1_500_000//2:
-            break
-        res = squares[-1] + square
-        if res in perfect_squares:
-            wire_len = i + j+1 + perfect_squares[res]
-            if wire_len < 1_500_000:
-                # print(wire_len, i, j, int(res), res)
-                if wire_len not in dp:
-                    dp[wire_len] = []
-                dp[wire_len].append((wire_len, i, j+1, perfect_squares[res]))
-    
-    if i % 1000 == 0:
-        print(i)
+        for j, square in enumerate(squares):
+            res = squares[-1] + square
+            if i + j+1 + sqrt(res) > n:
+                break
+            if res in perfect_squares:
+                wire_len = i + j+1 + perfect_squares[res]
+                if wire_len < n:
+                    # print(wire_len, i, j, int(res), res)
+                    if wire_len not in dp:
+                        dp[wire_len] = []
+                    dp[wire_len].append((wire_len, i, j+1, perfect_squares[res]))
+        
+        if i % 1000 == 0:
+            print(i)
+    return dp
 
 count = 0
-for k, v in dp.items():
-    if len(v) == 1:
-        # print(k, v)
-        count += 1
-    # if len(v) > 1:
-    #     print(k, v)
+dp = resolve(10_000)
+# dp = resolve(1_500_000)
+# for k, v in dp.items():
+#     if len(v) == 1:
+#         # print(k, v)
+#         count += 1
+#     # if len(v) > 1:
+#     #     print(k, v)
 
-print(count)
+# print(count)
