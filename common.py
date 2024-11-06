@@ -233,6 +233,7 @@ def are_coprime(a, b):
     common_factors = set([x[0] for x in a_factors]).intersection([x[0] for x in b_factors])
     return len(common_factors) == 0
 
+import math
 
 def phi(n):
     count = n
@@ -240,4 +241,27 @@ def phi(n):
     for factor, _ in factors:
         count *= (1 - 1/factor)
     
-    return count
+    return int(count+0.5)
+
+
+def closest_fraction_to_with_max_d(right_numerator, right_denominator, d):
+    smallest_diff = 1
+    result_numerator = 0
+    result_denominator = 0
+
+    # We obviously need to check only one option for each denominator, this being the one that brings it closest to 3/7
+    # We have 3/7 > x/i
+    # We change this to 3i/7 > x, so the obvious candidate is to check the floor of 3i/7
+    # So if i is a multiple of 7, we get an integer and therefore the floor is equal not greater (thats why we skip multiples of 7)
+    # It could still be, that floor(3i/7)/i is not a proper fraction, but for that we just reduce the fraction
+    for i in reversed(range(1, d+1)):
+        if i % right_denominator == 0 or (right_numerator * i) % right_denominator == 0:
+            continue
+        numerator = (right_numerator * i) // right_denominator
+
+        diff = right_numerator / right_denominator - numerator / i
+        if diff < smallest_diff:
+            smallest_diff = diff
+            result_numerator = numerator
+            result_denominator = i
+    return result_numerator, result_denominator
