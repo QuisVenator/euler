@@ -11,6 +11,7 @@ known = {
     "45362": 2,
 }
 
+
 for k, v in known.items():
     k = "".join(sorted(k.replace("0", "1")))
     dp[k] = v +1
